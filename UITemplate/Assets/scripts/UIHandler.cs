@@ -17,10 +17,10 @@ public class UIHandler : MonoBehaviour {
 
 	void Awake() //Ensures only 1 instance of UI exists at any given time. 
 	{
-		if(!UI)
+		if(UI == null)
 		{
-			UI = this;
 			DontDestroyOnLoad(gameObject);
+			UI = this;
 		}
 		else
 		{
