@@ -2,47 +2,74 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// User Interface Handler
+/// 
+/// 
+/// This Singleton class keeps track of all gameObjects with a Menu.cs script attached to them.
+/// gameObjects must have a Canvas and a CanvasGroup component attached to them. 
+/// Canvas gameObjects must be a child of the UI master gameObject
+/// 
+/// Authored by Lucas Rumney of Jet Drift Studios 
+/// August 2015
+/// 
+/// 
+/// </summary>
+
 public class UIHandler : MonoBehaviour {
 
-	public static UIHandler UI;
+	public static UIHandler UI;											//Static reference to this class
 
-	public Menu[] menus = new Menu[10];
-	public bool pause = false;
-	
-	// Use this for initialization
-	void Start () 
-	{
-		menus = this.gameObject.GetComponentsInChildren<Menu>();
-	}
+	public Menu[] menus = new Menu[10];									//array to hold menus, increase if you have more menus
+	public bool pause = false;											//whether or not the game is pause (time.timescale = 0.0f)
 
-	void Awake() //Ensures only 1 instance of UI exists at any given time. 
+
+	/// <summary>
+	/// Awake Singleton Pattern
+	/// 
+	/// </summary>
+
+	void Awake() 														//Ensures only 1 instance of UI exists at any given time
 	{
 		if(UI == null)
 		{
-			DontDestroyOnLoad(gameObject);
-			UI = this;
+			DontDestroyOnLoad(gameObject);								//makes gameObject persist between level loads
+			UI = this;													//sets this UI as the only UI
 		}
 		else
 		{
-			Destroy(gameObject);
+			Destroy(gameObject);										//if its not the only UI, destroy it
 		}
 	}
 
+	// Use this for initialization
+	void Start () 
+	{
+		menus = this.gameObject.GetComponentsInChildren<Menu>();		//menus is initialized with all Menu gameobjects that are children
+		if (Application.loadedLevel == 0)								//if first scene, display main menu, close all others
+		{
+			openMenu("main");
+			closeMenu("options");
+			closeMenu("pause");											//not completely necessary, but convenient.
+			closeMenu("ingameoptions");
+		}
+	}
+
+	
 	// Update is called once per frame
 	void Update () 
 	{
-//		foreach (Menu M in menus)
-//		{
-//			Debug.Log(M.name);
-//		}
-		if (Input.GetKeyUp(KeyCode.Escape) && Application.loadedLevel != 0)
+		if (Input.GetKeyUp(KeyCode.Escape) && Application.loadedLevel != 0)		//toggles pause and timescale
 		{
-			pause = !pause;
+			togglePause();
 			pauseMenu(pause);
 		}
 	}
-	
 
+
+	/// <summary>
+	/// Opens the menu "Menu"
+	/// </summary>
 	public void openMenu(string Menu) //Displays all of the Canvas' associated with the nextMenu tag
 	{
 		foreach (Menu M in menus)
@@ -55,8 +82,12 @@ public class UIHandler : MonoBehaviour {
 			}
 		}
 	}
-	
-	public void closeMenu(string Menu)//hides all canvas' with the menu tag. 
+
+
+	/// <summary>
+	/// Closes the menu "Menu"
+	/// </summary>
+	public void closeMenu(string Menu) 
 	{
 		foreach (Menu M in menus)
 		{
@@ -69,16 +100,40 @@ public class UIHandler : MonoBehaviour {
 		}
 	}
 
+
+	/// <summary>
+	/// Button Action
+	/// Changes Scene using the scene name String
+	/// </summary>
 	public void changeSceneString(string scene)
 	{
 		Application.LoadLevel(scene);
 	}
 
+	/// <summary>
+	/// Button Action
+	/// Changes Scene using the scene integer found in File>Build Settings. Will not function without Build Settings Scene Order set!
+	/// </summary>
 	public void changeSceneIndex(int scene)
 	{
 		Application.LoadLevel(scene);
 	}
 
+
+	/// <summary>
+	/// Button Action
+	/// Toggles the pause boolean value. 
+	/// Note: this function will only affect the pause boolean which changes the behavior of pauseMenu() next time it's called
+	/// </summary>
+	public void togglePause()
+	{
+		pause = !pause;
+	}
+
+	/// <summary>
+	/// Button Action
+	/// Displays/Hides pause menu and starts/stops time based on pause boolean
+	/// </summary>	
 	public void pauseMenu(bool pause)
 	{
 		if (pause)
