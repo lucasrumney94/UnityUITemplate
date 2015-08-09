@@ -14,16 +14,19 @@ public class Menu : MonoBehaviour {
 
 	public string name;
 	public bool useMainCamera = true;
+	public float planeDistance = 15;
 
 	// Use this for initialization
 	void Start () 
 	{
+		gameObject.GetComponent<Canvas>().planeDistance = planeDistance;
 		if (useMainCamera)
 			gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
 	}
 
 	void OnLevelWasLoaded()
 	{
+		gameObject.GetComponent<Canvas>().planeDistance = planeDistance;
 		if (useMainCamera)
 			gameObject.GetComponent<Canvas>().worldCamera = Camera.main;
 	}

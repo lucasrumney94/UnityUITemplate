@@ -45,6 +45,7 @@ public class UIHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+		Time.timeScale = 1.0f;											//When project opens, make sure Timescale is normal
 		menus = this.gameObject.GetComponentsInChildren<Menu>();		//menus is initialized with all Menu gameobjects that are children
 		if (Application.loadedLevel == 0)								//if first scene, display main menu, close all others
 		{
@@ -146,5 +147,10 @@ public class UIHandler : MonoBehaviour {
 			Time.timeScale = 1.0f;
 			closeMenu("pause");
 		}
+	}
+
+	public void closeGame()
+	{
+		Application.Quit();
 	}
 }
