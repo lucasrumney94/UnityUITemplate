@@ -23,6 +23,8 @@ public class UIHandler : MonoBehaviour {
 	public Menu[] menus = new Menu[10];									//array to hold menus, increase if you have more menus
 	public bool pause = false;											//whether or not the game is pause (time.timescale = 0.0f)
 
+	public List<Menu> activeMenus = new List<Menu>();					//List of activated menus in oldest to newest. The last in the list should be the currently active menu
+
 
 	/// <summary>
 	/// Awake Singleton Pattern
@@ -54,16 +56,23 @@ public class UIHandler : MonoBehaviour {
 			closeMenu("pause");											//not completely necessary, but convenient.
 			closeMenu("ingameoptions");
 		}
+		else
+		{
+			closeMenu("main");
+		}
 	}
 
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetKeyUp(KeyCode.Escape) && Application.loadedLevel != 0)		//toggles pause and timescale
+		if (activeMenus.Count == 0 || getActiveMenu().menuName == "pause")
 		{
-			togglePause();
-			pauseMenu(pause);
+			if (Input.GetKeyUp(KeyCode.Escape) && Application.loadedLevel != 0)		//toggles pause and timescale
+			{
+				togglePause();
+				pauseMenu(pause);
+			}
 		}
 	}
 
@@ -75,8 +84,9 @@ public class UIHandler : MonoBehaviour {
 	{
 		foreach (Menu M in menus)
 		{
-			if (M.name == Menu)
+			if (M.menuName == Menu)
 			{
+				activeMenus.Add(M);
 				M.gameObject.GetComponent<Canvas>().enabled = true;
 				M.gameObject.GetComponent<CanvasGroup>().blocksRaycasts = true;
 				M.gameObject.GetComponent<CanvasGroup>().interactable = true;
@@ -92,8 +102,9 @@ public class UIHandler : MonoBehaviour {
 	{
 		foreach (Menu M in menus)
 		{
-			if (M.name == Menu)
+			if (M.menuName == Menu)
 			{
+				activeMenus.Remove(M);
 				M.gameObject.GetComponent<Canvas>().enabled = false;
 				M.gameObject.GetComponent<CanvasGroup>().blocksRaycasts = false;
 				M.gameObject.GetComponent<CanvasGroup>().interactable = false;
@@ -148,6 +159,19 @@ public class UIHandler : MonoBehaviour {
 			closeMenu("pause");
 		}
 	}
+
+	public Menu getActiveMenu()
+	{
+		Menu activeMenu;
+		if (activeMenus.Count == 0)
+			return null;
+		else 
+		{
+			activeMenu = activeMenus[activeMenus.Count-1]; 
+			return activeMenu;
+		}
+	}
+
 
 	public void closeGame()
 	{

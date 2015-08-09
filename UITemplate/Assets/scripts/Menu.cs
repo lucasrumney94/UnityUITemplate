@@ -12,9 +12,9 @@ using System.Collections;
 
 public class Menu : MonoBehaviour {
 
-	public string name;
+	public string menuName;
 	public bool useMainCamera = true;
-	public float planeDistance = 15;
+	public float planeDistance = 5;
 
 	// Use this for initialization
 	void Start () 
