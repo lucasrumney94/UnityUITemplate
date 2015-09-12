@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 public class UIHandler : MonoBehaviour {
 
-	public static UIHandler UI;											//Static reference to this class
+												//Static reference to this class
 
 	public Menu[] menus = new Menu[10];									//array to hold menus, increase if you have more menus
 	public bool pause = false;											//whether or not the game is pause (time.timescale = 0.0f)
@@ -30,15 +30,30 @@ public class UIHandler : MonoBehaviour {
 	/// Awake Singleton Pattern
 	/// 
 	/// </summary>
+	
+	private static UIHandler ui;
+	public static UIHandler UI
+	{
+		get
+		{
+			if(ui == null)
+			{
+				GameObject UIPrefab = new GameObject("UIPrefab");
+				UIPrefab.AddComponent<UIHandler>();
+			}
+			return ui;
+		}
+	}
+
 
 	void Awake() 														//Ensures only 1 instance of UI exists at any given time
 	{
-		if(UI == null)
+		if(ui == null)
 		{
-			DontDestroyOnLoad(gameObject);								//makes gameObject persist between level loads
-			UI = this;													//sets this UI as the only UI
+			//DontDestroyOnLoad(gameObject);							//makes gameObject persist between level loads
+			ui = this;													//sets this UI as the only UI
 		}
-		else
+		else if (ui != this)
 		{
 			Destroy(gameObject);										//if its not the only UI, destroy it
 		}
